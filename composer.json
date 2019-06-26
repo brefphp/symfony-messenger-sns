@@ -1,5 +1,5 @@
 {
-    "name": "bref/symfony-messenger-sns-pack",
+    "name": "bref/symfony-messenger-sns",
     "description": "Installs and confgures SNS with Symfony Messenger",
     "type": "library",
     "license": "MIT",
