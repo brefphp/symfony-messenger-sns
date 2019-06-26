@@ -1,7 +1,6 @@
 services:
-  app.sns_consumer:
+  Bref\MessengerSns\Consumer:
     public: true
-    class: App\Consumer\SnsConsumer
     arguments:
       - '@messenger.routable_message_bus'
       - '@messenger.default_serializer'
