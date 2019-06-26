@@ -1,0 +1,38 @@
+#!/usr/bin/env php
+<?php
+
+use App\Kernel;
+use App\Consumer\SnsConsumer;
+
+$paths = [
+    \dirname(__DIR__),
+    \dirname(__DIR__).'/..',
+    \dirname(__DIR__).'/../..',
+];
+
+foreach ($paths as $path) {
+    if (\file_exists($path.'/vendor/autoload.php')) {
+        require_once $path.'/vendor/autoload.php';
+        require_once $path.'/config/bootstrap.php';
+        break;
+    }
+}
+
+lambda(static function (array $event) {
+    $kernel = new Kernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
+    $kernel->boot();
+    $container = $kernel->getContainer();
+
+    /** @var SnsConsumer $consumer */
+    $consumer = $container->get(SnsConsumer::class);
+
+    foreach ($event['Records'] as $record) {
+        if (!isset($record['Sns'])) {
+            continue;
+        }
+
+        $consumer->consume($record['Sns']);
+    }
+
+    return 'OK.';
+});

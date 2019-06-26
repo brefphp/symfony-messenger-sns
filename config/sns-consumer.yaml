@@ -1,0 +1,24 @@
+services:
+  App\Consumer\SnsConsumer:
+    public: true
+    arguments:
+      - '@messenger.routable_message_bus'
+      - '@messenger.default_serializer'
+      - '@logger'
+
+framework:
+  messenger:
+    transports:
+      sns:
+        dsn: '%env(AWS_SNS_DSN)%'
+
+enqueue:
+  acme:
+    transport:
+      dsn: "sns://foo" # Must start with "sns:". Topic details come from framework.mesenger.transport.sns.dsn
+      connection_factory_class: 'Enqueue\Sns\SnsConnectionFactory'
+      key: '%env(AWS_KEY)%'
+      secret: '%env(AWS_SECRET)%'
+      region: '%env(AWS_TARGET_REGION)%'
+    client: ~
+

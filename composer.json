@@ -1,0 +1,19 @@
+{
+    "name": "bref/symfony-messenger-sns-pack",
+    "description": "Installs and confgures SNS with Symfony Messenger",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Nyholm",
+            "email": "tobias.nyholm@gmail.com"
+        }
+    ],
+    "bin": [
+        "bin/message-consumer"
+    ],
+    "require": {
+        "enqueue/sns": "^0.9.12",
+        "sroze/messenger-enqueue-transport": "^0.3.0"
+    }
+}
