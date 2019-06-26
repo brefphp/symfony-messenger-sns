@@ -15,5 +15,10 @@
     "require": {
         "enqueue/sns": "^0.9.12",
         "sroze/messenger-enqueue-transport": "^0.3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Bref\\MessengerSns\\": "src/"
+        }
     }
 }
