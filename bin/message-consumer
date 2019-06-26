@@ -1,9 +1,6 @@
 #!/usr/bin/env php
 <?php
 
-use App\Kernel;
-use App\Consumer\SnsConsumer;
-
 $paths = [
     \dirname(__DIR__),
     \dirname(__DIR__).'/..',
@@ -19,12 +16,12 @@ foreach ($paths as $path) {
 }
 
 lambda(static function (array $event) {
-    $kernel = new Kernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
+    $kernel = new \App\Kernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
     $kernel->boot();
     $container = $kernel->getContainer();
 
     /** @var SnsConsumer $consumer */
-    $consumer = $container->get(SnsConsumer::class);
+    $consumer = $container->get('app.sns_consumer');
 
     foreach ($event['Records'] as $record) {
         if (!isset($record['Sns'])) {

@@ -1,16 +1,20 @@
 services:
-  App\Consumer\SnsConsumer:
+  app.sns_consumer:
     public: true
+    class: App\Consumer\SnsConsumer
     arguments:
       - '@messenger.routable_message_bus'
       - '@messenger.default_serializer'
+      - 'sns' # same as framework.messenger.transports.*sns*
       - '@logger'
+      - '@event_dispatcher'
 
 framework:
   messenger:
     transports:
       sns:
         dsn: '%env(AWS_SNS_DSN)%'
+        serializer: 'messenger.default_serializer'
 
 enqueue:
   acme:
