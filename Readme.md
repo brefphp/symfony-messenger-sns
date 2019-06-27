@@ -10,10 +10,9 @@ things configured for you.
 This file will be "composer copied" to your projects bin folder (ie `vendor/bin/message-consumer`). This file receives 
 SNS messages and gives them to `App\Consumer\SnsConsumer`.
 
-#### src/Consumer/SnsConsumer
+#### src/Consumer.php
 
-This file will be copied by Flex to `App\Consumer\SnsConsumer`. This class is responsible to decode the SNS message
-and put it back on the message bus. Feel free to modify this file after your needs. Maybe configure [retry mechanism](http://developer.happyr.com/sns-retry).
+This class is responsible to decode the SNS message and put it back on the message bus. 
 
 #### config/sns-consumer.yaml
 

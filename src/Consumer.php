@@ -2,16 +2,22 @@
 
 declare(strict_types=1);
 
-namespace App\Consumer;
+namespace Bref\MessengerSns;
 
+use Bref\MessengerSns\Event\SnsMessageDecodeFailed;
+use Bref\MessengerSns\Event\SnsMessageFailed;
+use Bref\MessengerSns\Event\SnsMessageHandled;
+use Bref\MessengerSns\Event\SnsMessageReceived;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Messenger\Event\WorkerMessageReceivedEvent;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\ReceivedStamp;
 use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-final class SnsConsumer
+/**
+ * @author Tobias Nyholm <tobias.nyholm@gmail.com>
+ */
+final class Consumer
 {
     private $bus;
     private $serializer;
@@ -34,30 +40,43 @@ final class SnsConsumer
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    public function consume(array $event)
+    public function consume(array $snsEvent)
     {
         try {
-            $envelope = $this->serializer->decode(['body' => $event['Message']]);
+            $envelope = $this->serializer->decode(['body' => $snsEvent['Message']]);
+        } catch (\Throwable $e) {
+            $this->dispatchEvent(new SnsMessageDecodeFailed($snsEvent, $e, $this->transportName));
+        }
 
-            $sfEvent = new WorkerMessageReceivedEvent($envelope, $this->transportName);
-            if ($this->eventDispatcher !== null) {
-                $this->eventDispatcher->dispatch($sfEvent);
-            }
+        $sfEvent = new SnsMessageReceived($snsEvent, $envelope, $this->transportName);
+        $this->dispatchEvent($sfEvent);
 
-            if (!$sfEvent->shouldHandle()) {
-                return;
-            }
+        if (!$sfEvent->shouldHandle()) {
+            return;
+        }
 
+        try {
             $this->bus->dispatch($envelope->with(new ReceivedStamp($this->transportName)));
         } catch (\Throwable $e) {
-            $retryAttempt = (int) ($event['MessageAttributes']['retry_attempt']['Value'] ?? 0);
             $this->logger->critical('Could not consume message from SNS.', [
                 'exception' => $e,
                 'category' => 'sns',
-                'retry_attempt' => $retryAttempt,
             ]);
 
-            // TODO publish the message on a queue
+            $this->dispatchEvent(new SnsMessageFailed($snsEvent, $envelope, $this->transportName, $e, /* $willRetry */ false));
+
+            return;
         }
+
+        $this->dispatchEvent(new SnsMessageHandled($snsEvent, $envelope, $this->transportName));
+    }
+
+    private function dispatchEvent($event)
+    {
+        if (null === $this->eventDispatcher) {
+            return;
+        }
+
+        $this->eventDispatcher->dispatch($event);
     }
 }

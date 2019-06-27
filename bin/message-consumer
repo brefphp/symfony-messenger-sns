@@ -21,7 +21,7 @@ lambda(static function (array $event) {
     $container = $kernel->getContainer();
 
     /** @var SnsConsumer $consumer */
-    $consumer = $container->get('app.sns_consumer');
+    $consumer = $container->get(\Bref\MessengerSns\Consumer::class);
 
     foreach ($event['Records'] as $record) {
         if (!isset($record['Sns'])) {
