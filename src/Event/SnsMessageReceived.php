@@ -4,16 +4,39 @@ declare(strict_types=1);
 
 namespace Bref\MessengerSns\Event;
 
-use Symfony\Component\Messenger\Envelope;
-use Symfony\Component\Messenger\Event\WorkerMessageReceivedEvent;
-
-class SnsMessageReceived extends WorkerMessageReceivedEvent
+/**
+ * A raw SNS message was received.
+ *
+ * @author Tobias Nyholm <tobias.nyholm@gmail.com>
+ */
+final class SnsMessageReceived
 {
-    use SnsMessageTrait;
+    private $snsEvent;
+    private $receiverName;
+    private $shouldHandle = true;
 
-    public function __construct(array $snsEvent, Envelope $envelope, string $receiverName)
+    public function __construct(array $snsEvent, string $receiverName)
     {
+        $this->receiverName = $receiverName;
         $this->snsEvent = $snsEvent;
-        parent::__construct($envelope, $receiverName);
+    }
+
+    public function shouldHandle(bool $shouldHandle = null): bool
+    {
+        if (null !== $shouldHandle) {
+            $this->shouldHandle = $shouldHandle;
+        }
+
+        return $this->shouldHandle;
+    }
+
+    public function getSnsEvent(): array
+    {
+        return $this->snsEvent;
+    }
+
+    public function getReceiverName(): string
+    {
+        return $this->receiverName;
     }
 }

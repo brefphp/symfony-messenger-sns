@@ -1,13 +1,3 @@
-services:
-  Bref\MessengerSns\Consumer:
-    public: true
-    arguments:
-      - '@messenger.routable_message_bus'
-      - '@messenger.default_serializer'
-      - 'sns' # same as framework.messenger.transports.*sns*
-      - '@logger'
-      - '@event_dispatcher'
-
 framework:
   messenger:
     transports:
@@ -25,3 +15,12 @@ enqueue:
       region: '%env(AWS_TARGET_REGION)%'
     client: ~
 
+services:
+  Bref\MessengerSns\Consumer:
+    public: true
+    arguments:
+      - '@messenger.routable_message_bus'
+      - '@messenger.default_serializer'
+      - 'sns' # same as framework.messenger.transports.*sns*
+      - '@event_dispatcher'
+      - '@logger'
