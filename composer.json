@@ -14,7 +14,8 @@
     ],
     "require": {
         "enqueue/sns": "^0.9.12",
-        "sroze/messenger-enqueue-transport": "^0.3.0"
+        "sroze/messenger-enqueue-transport": "^0.3.0",
+        "symfony/event-dispatcher-contracts": "^1.1"
     },
     "autoload": {
         "psr-4": {

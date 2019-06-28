@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Bref\MessengerSns\Event;
 
 /**
- * A raw SNS message was received.
+ * A raw SNS message was received. Use this event to decide if we want to handle this SNS message or not.
  *
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
