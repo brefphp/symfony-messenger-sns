@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Bref\MessengerSns\Event;
 
-use Symfony\Component\Messenger\Envelope;
-use Symfony\Component\Messenger\Event\WorkerMessageFailedEvent;
-use Symfony\Component\Messenger\Event\WorkerMessageReceivedEvent;
-
-class SnsMessageDecodeFailed
+/**
+ * Thrown when a SNS event could not be decoded.
+ *
+ * @author Tobias Nyholm <tobias.nyholm@gmail.com>
+ */
+final class SnsMessageDecodeFailed
 {
-    use SnsMessageTrait;
+    private $snsEvent;
     private $throwable;
     private $receiverName;
 
@@ -19,6 +20,11 @@ class SnsMessageDecodeFailed
         $this->snsEvent = $snsEvent;
         $this->throwable = $throwable;
         $this->receiverName = $receiverName;
+    }
+
+    public function getSnsEvent(): array
+    {
+        return $this->snsEvent;
     }
 
     public function getThrowable(): \Throwable

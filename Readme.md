@@ -12,7 +12,8 @@ SNS messages and gives them to `App\Consumer\SnsConsumer`.
 
 #### src/Consumer.php
 
-This class is responsible to decode the SNS message and put it back on the message bus. 
+This class is responsible to decode the SNS message and put it back on the message bus. It dispatches events which one can
+subscribe to in order to modify behavior. Ie, retry failed events. 
 
 #### config/sns-consumer.yaml
 
